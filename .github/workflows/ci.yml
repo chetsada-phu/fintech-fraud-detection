@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install project
+        run: python -m pip install ".[dev]"
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Check lint
+        if: matrix.python-version == '3.13'
+        run: python -m ruff check .
+      - name: Check formatting
+        if: matrix.python-version == '3.13'
+        run: python -m ruff format --check .
+      - name: Check dependencies
+        run: python -m pip check
+
+  reproducible-demo:
+    name: Reproduce local demo inputs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install project
+        run: python -m pip install ".[dev]"
+      - name: Generate chronological data and features
+        run: |
+          fraud-generate-data
+          fraud-split-data
+          fraud-build-features
+      - name: Build checked artifact and monitoring report
+        run: |
+          fraud-build-provisional-model
+          fraud-monitor-input-drift
+          fraud-monitor-performance-example
+      - name: Check generated report stability
+        run: git diff --exit-code -- docs/input_drift_report.md docs/performance_monitoring_example.md
+      - name: Smoke-test the scored demo
+        run: python scripts/smoke_demo.py
+
+  container-build:
+    name: Build local container image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build image
+        run: docker build --tag fintech-fraud-demo:ci .

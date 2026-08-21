@@ -1,0 +1,8 @@
+[temporal_features]
+# Customer and terminal velocity intervals use [current time - window,
+# current time). Transactions at the same timestamp never see each other.
+short_window_seconds = 3600
+long_window_seconds = 86400
+
+# Prior amount means and deviations are written deterministically at this scale.
+amount_decimal_places = 4

@@ -1,0 +1,11 @@
+[selected_decision_policy]
+# This policy was selected on chronological validation only. It is an
+# engineering provisional contract, not a promoted model or production policy.
+policy_version = "validation-provisional-v1"
+selection_split = "validation"
+score_source_label = "XGBoost engineering-only provisional score source"
+
+# Frozen from the reproducible Phase 4 policy report. Equal thresholds mean
+# decline takes precedence at 0.93 and the review band is empty.
+review_threshold = "0.93"
+decline_threshold = "0.93"

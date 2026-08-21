@@ -1,0 +1,16 @@
+[decision_reasons]
+# Explanations use decision-time fields only. They describe configured patterns,
+# not model causality, fairness, or regulatory compliance.
+high_transaction_amount_threshold = "220.00"
+customer_amount_ratio_threshold = "3.00"
+customer_short_window_count_threshold = 3
+
+# Feature reasons are emitted in this fixed order and capped before the honest
+# score-band fallback is considered.
+priority_order = [
+    "HIGH_AMOUNT_VS_CUSTOMER_BASELINE",
+    "HIGH_TRANSACTION_AMOUNT",
+    "UNUSUAL_TRANSACTION_VELOCITY",
+    "LIMITED_CUSTOMER_HISTORY",
+]
+max_feature_reason_codes = 3

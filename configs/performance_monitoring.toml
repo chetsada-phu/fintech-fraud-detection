@@ -1,0 +1,4 @@
+[performance_monitoring]
+monitor_version = "delayed-label-example-v1"
+source_label = "illustrative synthetic decision outcomes"
+risky_decisions = ["review", "decline"]

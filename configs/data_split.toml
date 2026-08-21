@@ -1,0 +1,6 @@
+[split]
+# Fractions are applied chronologically. Rows with the same event timestamp are
+# kept together, so realized counts may differ slightly from these targets.
+train_fraction = 0.60
+validation_fraction = 0.20
+test_fraction = 0.20

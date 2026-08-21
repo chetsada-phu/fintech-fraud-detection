@@ -1,0 +1,12 @@
+[decision_policy]
+# Threshold selection is deliberately restricted to the chronological validation
+# split. The one-time test split must remain frozen and must not be scored here.
+selection_split = "validation"
+
+# XGBoost is used only to supply scores for Phase 4 engineering. It is not a
+# promoted model or a performance claim.
+score_source_label = "XGBoost engineering-only provisional score source"
+
+# Fixed before selection. A decimal string keeps the inclusive 0-to-1 grid
+# reproducible without binary floating-point step accumulation.
+threshold_grid_step = "0.01"

@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fintech-fraud-detection"
+version = "0.1.0"
+description = "An end-to-end payment fraud detection and risk decisioning portfolio project."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.137.0",
+    "joblib==1.5.3",
+    "pydantic==2.13.4",
+    "scikit-learn==1.9.0",
+    "uvicorn==0.51.0",
+    "xgboost==3.2.0; python_version < '3.12'",
+    "xgboost==3.3.0; python_version >= '3.12'",
+]
+
+[project.scripts]
+fraud-generate-data = "fraud_detection.data.cli:main"
+fraud-profile-data = "fraud_detection.data.eda_cli:main"
+fraud-split-data = "fraud_detection.data.split_cli:main"
+fraud-evaluate-rules = "fraud_detection.models.rule_cli:main"
+fraud-compare-baselines = "fraud_detection.models.comparison_cli:main"
+fraud-build-features = "fraud_detection.features.temporal_cli:main"
+fraud-evaluate-xgboost = "fraud_detection.models.xgboost_cli:main"
+fraud-analyze-xgboost-features = "fraud_detection.models.feature_ablation_cli:main"
+fraud-select-decision-policy = "fraud_detection.decisioning.policy_cli:main"
+fraud-analyze-policy-sensitivity = "fraud_detection.decisioning.policy_sensitivity_cli:main"
+fraud-build-provisional-model = "fraud_detection.models.artifact_cli:main"
+fraud-benchmark-scored-api = "fraud_detection.serving.latency_cli:main"
+fraud-monitor-input-drift = "fraud_detection.monitoring.drift_cli:main"
+fraud-monitor-performance-example = "fraud_detection.monitoring.performance_cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "httpx2==2.7.0",
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+demo = [
+    "playwright==1.61.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"fraud_detection.serving" = ["static/*.html"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-config --strict-markers"
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+src = ["src", "tests"]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["B", "E4", "E7", "E9", "F", "I", "UP"]

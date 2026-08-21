@@ -1,0 +1,29 @@
+[decision_policy_sensitivity]
+# Sensitivity analysis is descriptive and validation-only. Scenario order below
+# is preserved in the generated report.
+evaluation_split = "validation"
+base_scenario_key = "base"
+
+[[decision_policy_sensitivity.scenarios]]
+key = "base"
+display_name = "Base assumptions"
+
+[[decision_policy_sensitivity.scenarios]]
+key = "higher_fraud_loss"
+display_name = "Higher fraud loss"
+fraud_loss_multiplier = "2.00"
+
+[[decision_policy_sensitivity.scenarios]]
+key = "lower_review_cost"
+display_name = "Lower review cost"
+manual_review_cost = "1.00"
+
+[[decision_policy_sensitivity.scenarios]]
+key = "higher_false_decline_cost"
+display_name = "Higher false-decline cost"
+false_decline_cost = "100.00"
+
+[[decision_policy_sensitivity.scenarios]]
+key = "tighter_review_capacity"
+display_name = "Tighter review capacity"
+max_manual_review_rate = 0.01

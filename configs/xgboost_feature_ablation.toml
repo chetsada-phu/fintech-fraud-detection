@@ -1,0 +1,32 @@
+[xgboost_feature_ablation]
+evaluation_split = "validation"
+baseline_variant_key = "full_baseline"
+
+# A simpler variant must exceed the frozen full baseline by this absolute AP
+# margin before the report recommends a bounded feature revision. This is a
+# validation-only screening rule, not a significance or promotion threshold.
+minimum_ap_improvement = 0.01
+
+[[xgboost_feature_ablation.variants]]
+key = "base_only"
+display_name = "Base only"
+include_temporal_features = false
+include_synthetic_ids = false
+
+[[xgboost_feature_ablation.variants]]
+key = "base_temporal"
+display_name = "Base + temporal"
+include_temporal_features = true
+include_synthetic_ids = false
+
+[[xgboost_feature_ablation.variants]]
+key = "base_ids"
+display_name = "Base + synthetic IDs"
+include_temporal_features = false
+include_synthetic_ids = true
+
+[[xgboost_feature_ablation.variants]]
+key = "full_baseline"
+display_name = "Frozen full baseline"
+include_temporal_features = true
+include_synthetic_ids = true

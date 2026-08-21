@@ -1,0 +1,9 @@
+[rule_baseline]
+# Flag amounts strictly greater than this value. This mirrors a transparent
+# simulator assumption and is not a claim about a real payment-risk threshold.
+high_amount_threshold = "220.00"
+
+# Flag transactions at or after 23:00 UTC and before 06:00 UTC. The interval
+# crosses midnight; the exact start is included and the exact end is excluded.
+unusual_hour_start_utc = 23
+unusual_hour_end_utc = 6

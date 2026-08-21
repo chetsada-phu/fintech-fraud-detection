@@ -1,0 +1,15 @@
+[xgboost_baseline]
+# Fixed before validation and test evaluation. This first baseline performs no
+# hyperparameter search and no early stopping on held-out data.
+n_estimators = 200
+max_depth = 3
+learning_rate = 0.05
+min_child_weight = 5.0
+subsample = 0.80
+column_sample_by_tree = 0.80
+regularization_lambda = 1.0
+regularization_alpha = 0.0
+use_training_class_ratio = true
+random_state = 42
+n_jobs = 1
+flag_threshold = 0.50

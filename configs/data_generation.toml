@@ -1,0 +1,22 @@
+[simulation]
+seed = 42
+start_datetime = "2018-04-01T00:00:00+00:00"
+days = 30
+customers = 100
+terminals = 50
+terminals_per_customer = 5
+
+# Customer profiles follow the broad ranges described in the ULB Handbook.
+min_customer_mean_amount = 5.0
+max_customer_mean_amount = 100.0
+min_customer_mean_transactions_per_day = 0.2
+max_customer_mean_transactions_per_day = 4.0
+
+# These scaled-down events preserve class imbalance in the small local sample.
+high_amount_fraud_threshold = 220.0
+terminal_compromise_events = 2
+terminal_compromise_duration_days = 5
+customer_compromise_events = 3
+customer_compromise_duration_days = 3
+customer_fraud_fraction = 0.333333
+customer_fraud_amount_multiplier = 5

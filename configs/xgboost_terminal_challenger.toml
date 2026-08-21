@@ -1,0 +1,28 @@
+[xgboost_feature_ablation]
+evaluation_split = "validation"
+baseline_variant_key = "full_baseline"
+
+# Predeclared before the terminal challenger is scored. The portable challenger
+# must exceed the frozen baseline by this absolute validation-AP margin.
+minimum_ap_improvement = 0.01
+
+[[xgboost_feature_ablation.variants]]
+key = "customer_temporal"
+display_name = "Portable customer history"
+include_temporal_features = true
+include_terminal_temporal_features = false
+include_synthetic_ids = false
+
+[[xgboost_feature_ablation.variants]]
+key = "customer_terminal_temporal"
+display_name = "Portable customer + terminal history"
+include_temporal_features = true
+include_terminal_temporal_features = true
+include_synthetic_ids = false
+
+[[xgboost_feature_ablation.variants]]
+key = "full_baseline"
+display_name = "Frozen full baseline"
+include_temporal_features = true
+include_terminal_temporal_features = false
+include_synthetic_ids = true

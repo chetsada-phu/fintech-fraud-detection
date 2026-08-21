@@ -1,0 +1,9 @@
+[logistic_baseline]
+# Fixed before held-out evaluation. No validation or test hyperparameter search
+# is part of this baseline.
+regularization_c = 1.0
+class_weight = "balanced"
+solver = "liblinear"
+max_iterations = 1000
+random_state = 42
+flag_threshold = 0.50

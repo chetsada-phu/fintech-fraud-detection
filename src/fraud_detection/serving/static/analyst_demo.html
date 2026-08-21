@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fraud desk | Local analyst demo</title>
+  <style>
+    :root {
+      --paper: #eef4f3;
+      --surface: #f9fbfa;
+      --ink: #152629;
+      --muted: #5b6f71;
+      --line: #bfd0ce;
+      --deep: #203b42;
+      --teal: #2c6e6f;
+      --teal-soft: #d5e7e3;
+      --approve: #2f7656;
+      --review: #b36a19;
+      --decline: #c84f36;
+      --focus: #006d77;
+      --shadow: 0 24px 70px rgba(21, 38, 41, 0.12);
+      font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      background:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px),
+        var(--paper);
+      background-size: 32px 32px;
+      background-position: -1px -1px;
+    }
+
+    button, input { font: inherit; }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid rgba(0, 109, 119, 0.28);
+      outline-offset: 2px;
+    }
+
+    .shell {
+      width: min(1440px, calc(100% - 40px));
+      margin: 20px auto;
+      border: 1px solid var(--ink);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: end;
+      padding: 26px 30px 22px;
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .eyebrow,
+    .utility,
+    .field-label,
+    .section-label,
+    .result-key,
+    .history-meta {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      letter-spacing: 0.075em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--teal);
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(2.35rem, 5vw, 5.8rem);
+      font-weight: 600;
+      line-height: 0.92;
+      letter-spacing: -0.065em;
+    }
+
+    .utility {
+      max-width: 290px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.68rem;
+      line-height: 1.55;
+      text-align: right;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+      min-height: 720px;
+    }
+
+    .entry-panel {
+      padding: 30px;
+      border-right: 1px solid var(--ink);
+    }
+
+    .result-panel {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: #e5eeec;
+    }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: baseline;
+      margin-bottom: 24px;
+    }
+
+    .panel-heading h2,
+    .history-heading h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+
+    .panel-heading p {
+      max-width: 420px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+      text-align: right;
+    }
+
+    .form-section {
+      padding: 22px 0 6px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-label {
+      display: block;
+      margin-bottom: 16px;
+      color: var(--teal);
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field { min-width: 0; }
+
+    .field.wide { grid-column: 1 / -1; }
+
+    .field-label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 0.64rem;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #91aaa7;
+      border-radius: 2px;
+      padding: 10px 12px;
+      color: var(--ink);
+      background: #fff;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.84rem;
+    }
+
+    input:hover { border-color: var(--teal); }
+
+    .action-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .score-button {
+      min-height: 48px;
+      border: 1px solid var(--deep);
+      border-radius: 2px;
+      padding: 0 22px;
+      color: #fff;
+      background: var(--deep);
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease;
+    }
+
+    .score-button:hover {
+      background: var(--teal);
+      transform: translateY(-1px);
+    }
+
+    .score-button:disabled {
+      cursor: wait;
+      opacity: 0.62;
+      transform: none;
+    }
+
+    .request-status {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .ticket-wrap { padding: 30px; }
+
+    .ticket {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--ink);
+      background: #fff;
+      box-shadow: 9px 9px 0 var(--teal-soft);
+    }
+
+    .ticket::before {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 8px;
+      background: var(--muted);
+      content: "";
+    }
+
+    .ticket[data-decision="approve"]::before { background: var(--approve); }
+    .ticket[data-decision="review"]::before { background: var(--review); }
+    .ticket[data-decision="decline"]::before { background: var(--decline); }
+
+    .ticket-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: start;
+      padding: 24px 24px 22px 30px;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .ticket-head h2 {
+      margin: 4px 0 0;
+      font-size: clamp(1.9rem, 5vw, 3.4rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      text-transform: lowercase;
+    }
+
+    .score-readout {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .score-readout small {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ticket-body {
+      display: grid;
+      gap: 22px;
+      padding: 24px 24px 26px 30px;
+    }
+
+    .empty-copy {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .result-key {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.59rem;
+      font-weight: 700;
+    }
+
+    .result-value {
+      display: block;
+      overflow-wrap: anywhere;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+
+    .reasons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .reasons li {
+      border: 1px solid var(--line);
+      padding: 7px 9px;
+      background: var(--paper);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.67rem;
+      overflow-wrap: anywhere;
+    }
+
+    .history {
+      margin-top: auto;
+      border-top: 1px solid var(--ink);
+      background: var(--surface);
+    }
+
+    .history-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .history-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+
+    .history-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .history-item,
+    .history-empty {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 14px;
+      align-items: center;
+      min-height: 56px;
+      padding: 10px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .history-item:last-child,
+    .history-empty:last-child { border-bottom: 0; }
+
+    .history-id {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.78rem;
+    }
+
+    .history-decision {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .history-score {
+      color: var(--muted);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.72rem;
+    }
+
+    .history-empty {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .error-box {
+      border: 1px solid var(--decline);
+      padding: 12px 14px;
+      color: #7e2c1c;
+      background: #fff0eb;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    [hidden] { display: none !important; }
+
+    .result-ready { animation: ticket-in 260ms ease-out both; }
+
+    @keyframes ticket-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .shell { width: min(100% - 20px, 720px); margin: 10px auto; }
+      .masthead { grid-template-columns: 1fr; }
+      .utility { text-align: left; }
+      .workspace { grid-template-columns: 1fr; }
+      .entry-panel { border-right: 0; border-bottom: 1px solid var(--ink); }
+    }
+
+    @media (max-width: 560px) {
+      .masthead, .entry-panel, .ticket-wrap { padding: 22px 18px; }
+      .field-grid, .result-grid { grid-template-columns: 1fr; }
+      .field.wide { grid-column: auto; }
+      .panel-heading, .history-heading { align-items: flex-start; flex-direction: column; }
+      .panel-heading p { text-align: left; }
+      .ticket-head { grid-template-columns: 1fr; }
+      .score-readout { text-align: left; }
+      .action-row { align-items: flex-start; flex-direction: column; }
+      .score-button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">Fraud desk / local model check</p>
+        <h1>Score one payment.</h1>
+      </div>
+      <p class="utility">
+        Engineering demo<br>
+        Precomputed customer history<br>
+        No fraud labels or live state
+      </p>
+    </header>
+
+    <div class="workspace">
+      <section class="entry-panel" aria-labelledby="entry-title">
+        <div class="panel-heading">
+          <h2 id="entry-title">Transaction input</h2>
+          <p>Use decision-time values only. The page sends this record to the existing scored-decision API.</p>
+        </div>
+
+        <form id="score-form">
+          <div class="form-section">
+            <span class="section-label">Payment</span>
+            <div class="field-grid">
+              <label class="field">
+                <span class="field-label">Transaction ID</span>
+                <input name="transaction_id" type="number" min="0" step="1" value="42" required>
+              </label>
+              <label class="field">
+                <span class="field-label">Amount</span>
+                <input name="tx_amount" type="number" min="0.01" step="0.01" value="300.00" required>
+              </label>
+              <label class="field">
+                <span class="field-label">Day index</span>
+                <input name="tx_time_days" type="number" min="0" step="1" value="2" required>
+              </label>
+              <label class="field">
+                <span class="field-label">UTC timestamp</span>
+                <input name="tx_datetime" type="text" value="2018-04-03T06:00:00Z" spellcheck="false" required>
+              </label>
+              <label class="field">
+                <span class="field-label">Customer ID</span>
+                <input name="customer_id" type="number" min="0" step="1" value="12" required>
+              </label>
+              <label class="field">
+                <span class="field-label">Terminal ID</span>
+                <input name="terminal_id" type="number" min="0" step="1" value="8" required>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <span class="section-label">Past customer activity</span>
+            <div class="field-grid">
+              <label class="field">
+                <span class="field-label">Short-window count</span>
+                <input name="customer_tx_count_short_window" type="number" min="0" step="1" value="3" required>
+              </label>
+              <label class="field">
+                <span class="field-label">Long-window count</span>
+                <input name="customer_tx_count_long_window" type="number" min="0" step="1" value="7" required>
+              </label>
+              <label class="field">
+                <span class="field-label">Prior mean amount</span>
+                <input name="customer_amount_mean_prior" type="number" min="0.01" step="0.01" value="100.00" required>
+              </label>
+              <label class="field">
+                <span class="field-label">Amount deviation</span>
+                <input name="customer_amount_deviation_from_mean_prior" type="number" step="0.01" value="200.00" required>
+              </label>
+              <label class="field wide">
+                <span class="field-label">Seconds since previous transaction</span>
+                <input name="customer_seconds_since_previous" type="number" min="0" step="1" value="60" required>
+              </label>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button class="score-button" id="score-button" type="submit">Score transaction</button>
+            <p class="request-status" id="request-status" role="status" aria-live="polite">Ready for a precomputed record.</p>
+          </div>
+        </form>
+      </section>
+
+      <aside class="result-panel" aria-label="Scored decision result">
+        <div class="ticket-wrap">
+          <article class="ticket" id="result-ticket" data-decision="pending">
+            <div class="ticket-head">
+              <div>
+                <span class="section-label">Decision receipt</span>
+                <h2 id="decision-value">waiting</h2>
+              </div>
+              <div class="score-readout">
+                <small>Risk score</small>
+                <span id="risk-score">0.0000</span>
+              </div>
+            </div>
+            <div class="ticket-body">
+              <p class="empty-copy" id="empty-result">Score a transaction to see the decision, reasons, and exact runtime identity.</p>
+              <div id="result-details" hidden>
+                <div class="result-grid">
+                  <div>
+                    <span class="result-key">Transaction</span>
+                    <span class="result-value" id="result-transaction-id"></span>
+                  </div>
+                  <div>
+                    <span class="result-key">Policy</span>
+                    <span class="result-value" id="result-policy"></span>
+                  </div>
+                  <div>
+                    <span class="result-key">Score source</span>
+                    <span class="result-value" id="result-source"></span>
+                  </div>
+                  <div>
+                    <span class="result-key">Artifact version</span>
+                    <span class="result-value" id="result-artifact-version"></span>
+                  </div>
+                  <div class="field wide">
+                    <span class="result-key">Artifact SHA-256</span>
+                    <span class="result-value" id="result-artifact-sha"></span>
+                  </div>
+                  <div class="field wide">
+                    <span class="result-key">XGBoost config SHA-256</span>
+                    <span class="result-value" id="result-config-sha"></span>
+                  </div>
+                </div>
+                <div style="margin-top: 22px;">
+                  <span class="result-key">Ordered reasons</span>
+                  <ul class="reasons" id="reason-list"></ul>
+                </div>
+              </div>
+              <div class="error-box" id="error-box" role="alert" hidden></div>
+            </div>
+          </article>
+        </div>
+
+        <section class="history" aria-labelledby="history-title">
+          <div class="history-heading">
+            <h2 id="history-title">Recent in this tab</h2>
+            <p>Up to 5 results. Refreshing clears them.</p>
+          </div>
+          <ol class="history-list" id="history-list">
+            <li class="history-empty">No scored transactions in this page session.</li>
+          </ol>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    "use strict";
+
+    const form = document.getElementById("score-form");
+    const button = document.getElementById("score-button");
+    const requestStatus = document.getElementById("request-status");
+    const ticket = document.getElementById("result-ticket");
+    const recentSubmissions = [];
+
+    const integerFields = new Set([
+      "transaction_id",
+      "tx_time_days",
+      "customer_tx_count_short_window",
+      "customer_tx_count_long_window",
+      "customer_seconds_since_previous",
+      "customer_id",
+      "terminal_id"
+    ]);
+
+    function readPayload() {
+      const payload = {};
+      const values = new FormData(form);
+      for (const [name, value] of values.entries()) {
+        payload[name] = integerFields.has(name) ? Number(value) : value;
+      }
+      return payload;
+    }
+
+    function setText(id, value) {
+      document.getElementById(id).textContent = String(value);
+    }
+
+    function renderReasons(reasonCodes) {
+      const list = document.getElementById("reason-list");
+      list.replaceChildren();
+      const reasons = reasonCodes.length ? reasonCodes : ["No risky conditions returned"];
+      for (const reason of reasons) {
+        const item = document.createElement("li");
+        item.textContent = String(reason);
+        list.append(item);
+      }
+    }
+
+    function renderResult(result) {
+      ticket.dataset.decision = String(result.decision);
+      ticket.classList.remove("result-ready");
+      void ticket.offsetWidth;
+      ticket.classList.add("result-ready");
+      setText("decision-value", result.decision);
+      setText("risk-score", Number(result.risk_score).toFixed(4));
+      setText("result-transaction-id", result.transaction_id);
+      setText("result-policy", result.policy_version);
+      setText("result-source", result.score_source_label);
+      setText("result-artifact-version", result.artifact_version);
+      setText("result-artifact-sha", result.artifact_sha256);
+      setText("result-config-sha", result.xgboost_config_sha256);
+      renderReasons(Array.isArray(result.reason_codes) ? result.reason_codes : []);
+      document.getElementById("empty-result").hidden = true;
+      document.getElementById("error-box").hidden = true;
+      document.getElementById("result-details").hidden = false;
+    }
+
+    function renderHistory() {
+      const list = document.getElementById("history-list");
+      list.replaceChildren();
+      for (const result of recentSubmissions) {
+        const item = document.createElement("li");
+        item.className = "history-item";
+
+        const transaction = document.createElement("span");
+        transaction.className = "history-id";
+        transaction.textContent = `TX ${String(result.transaction_id)}`;
+
+        const decision = document.createElement("span");
+        decision.className = "history-decision";
+        decision.textContent = String(result.decision);
+
+        const score = document.createElement("span");
+        score.className = "history-score";
+        score.textContent = Number(result.risk_score).toFixed(4);
+
+        item.append(transaction, decision, score);
+        list.append(item);
+      }
+    }
+
+    function errorMessage(body, status) {
+      if (body && Array.isArray(body.detail) && body.detail.length) {
+        return body.detail.map((item) => item.msg || "Invalid field value").join(". ");
+      }
+      if (body && typeof body.detail === "string") {
+        return body.detail;
+      }
+      return `The scoring request failed with HTTP ${status}. Check the fields and try again.`;
+    }
+
+    function showError(message) {
+      const errorBox = document.getElementById("error-box");
+      errorBox.textContent = String(message);
+      errorBox.hidden = false;
+      document.getElementById("result-details").hidden = true;
+      document.getElementById("empty-result").hidden = true;
+      ticket.dataset.decision = "pending";
+      setText("decision-value", "not scored");
+      setText("risk-score", "0.0000");
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      button.textContent = "Scoring...";
+      requestStatus.textContent = "Sending the precomputed record.";
+
+      try {
+        const response = await fetch("/scored-decisions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(readPayload())
+        });
+        const body = await response.json().catch(() => null);
+        if (!response.ok) {
+          throw new Error(errorMessage(body, response.status));
+        }
+
+        renderResult(body);
+        recentSubmissions.unshift(body);
+        recentSubmissions.splice(5);
+        renderHistory();
+        requestStatus.textContent = `Transaction ${String(body.transaction_id)} scored.`;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "The scoring request failed.";
+        showError(message);
+        requestStatus.textContent = "No result was saved to this page session.";
+      } finally {
+        button.disabled = false;
+        button.textContent = "Score transaction";
+      }
+    });
+  </script>
+</body>
+</html>

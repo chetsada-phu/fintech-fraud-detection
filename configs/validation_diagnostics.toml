@@ -1,0 +1,10 @@
+[validation_diagnostics]
+# Five fixed equal-width score bins keep the reliability table readable for the
+# small validation split. These settings diagnose scores; they do not fit a
+# calibrator or change the frozen model.
+calibration_bin_count = 5
+
+# Fixed transaction-amount bands in the dataset currency. The final boundary
+# matches the transparent high-amount rule, which flags amounts strictly above
+# 220.00.
+amount_band_upper_bounds = [50.0, 100.0, 220.0]

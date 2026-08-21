@@ -1,0 +1,15 @@
+[input_drift]
+monitor_version = "label-free-psi-v1"
+reference_split = "train"
+comparison_split = "validation"
+quantile_bin_count = 5
+smoothing_epsilon = 0.000001
+moderate_psi_threshold = 0.10
+high_psi_threshold = 0.25
+features = [
+    "tx_amount",
+    "customer_tx_count_short_window",
+    "customer_tx_count_long_window",
+    "customer_amount_deviation_from_mean_prior",
+    "customer_seconds_since_previous",
+]

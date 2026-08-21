@@ -1,0 +1,12 @@
+[business_costs]
+# All monetary values are simulated portfolio assumptions, not bank economics.
+# A missed fraud incurs its transaction amount times this multiplier.
+fraud_loss_multiplier = "1.00"
+
+# Every binary flag is treated as a manual review for this Phase 2 comparison.
+manual_review_cost = "5.00"
+max_manual_review_rate = 0.05
+
+# Reserved for the Phase 4 three-way decision policy; it is not charged while
+# both Phase 2 baselines produce only a binary review flag.
+false_decline_cost = "25.00"

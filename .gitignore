@@ -1,0 +1,40 @@
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environment
+.venv/
+venv/
+
+# Passwords and secrets
+.env
+.env.*
+!.env.example
+
+# Datasets
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Trained models and artifacts
+/models/
+artifacts/
+*.pkl
+*.joblib
+*.onnx
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store

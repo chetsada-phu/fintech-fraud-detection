@@ -1,0 +1,18 @@
+[scored_api_latency]
+benchmark_version = "local-in-process-v1"
+endpoint = "/scored-decisions"
+warmup_requests = 10
+measured_requests = 200
+
+[scored_api_latency.request]
+transaction_id = 42
+tx_amount = "300.00"
+tx_time_days = 2
+tx_datetime = "2018-04-03T06:00:00Z"
+customer_tx_count_short_window = 3
+customer_tx_count_long_window = 7
+customer_amount_mean_prior = "100.00"
+customer_amount_deviation_from_mean_prior = "200.00"
+customer_seconds_since_previous = 60
+customer_id = 12
+terminal_id = 8
